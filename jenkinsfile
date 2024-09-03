@@ -14,10 +14,16 @@ pipeline {
             }
             post {
                 always {
-                    mail to: "fernandojanuda@gmail.com",
-                         subject: "Test Stage Completed - Build # ${currentBuild.number}",
-                         body: "The tests have completed. Please review the attached logs.",
-                         attachLog: true
+                    script {
+                        // Save logs to a file
+                        sh 'echo "Logs for Unit and Integration Tests" > test-stage.log'
+                        archiveArtifacts artifacts: 'test-stage.log', allowEmptyArchive: true
+                    }
+                    // Send email with attached log
+                    emailext attachmentsPattern: 'test-stage.log',
+                             to: "fernandojanuda@gmail.com",
+                             subject: "Test Stage Completed - Build # ${currentBuild.number}",
+                             body: "The tests have completed. Please review the attached logs."
                 }
             }
         }
@@ -32,10 +38,16 @@ pipeline {
             }
             post {
                 always {
-                    mail to: "fernandojanuda@gmail.com",
-                         subject: "Security Scan Completed - Build # ${currentBuild.number}",
-                         body: "The security scan has completed. Please review the attached logs.",
-                         attachLog: true
+                    script {
+                        // Save logs to a file
+                        sh 'echo "Logs for Security Scan" > security-scan.log'
+                        archiveArtifacts artifacts: 'security-scan.log', allowEmptyArchive: true
+                    }
+                    // Send email with attached log
+                    emailext attachmentsPattern: 'security-scan.log',
+                             to: "fernandojanuda@gmail.com",
+                             subject: "Security Scan Completed - Build # ${currentBuild.number}",
+                             body: "The security scan has completed. Please review the attached logs."
                 }
             }
         }
